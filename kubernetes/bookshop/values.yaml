@@ -1,0 +1,28 @@
+replicaCount: 1
+
+apiGateway:
+  image: nahidacunny/bookshop-api-gateway:v1.0.0
+  port: 8000
+
+authService:
+  image: nahidacunny/bookshop-auth-service:v1.0.0
+  port: 8001
+  jwtSecretKey: ""
+  smtp:
+    server: ""
+    port: ""
+    senderEmail: ""
+    senderPassword: ""
+
+bookService:
+  image: nahidacunny/bookshop-book-service:v1.0.0
+  port: 8002
+
+cartService:
+  image: nahidacunny/bookshop-cart-service:v1.0.0
+  port: 8003
+
+mongodb:
+  image: mongo:latest
+  port: 27017
+  storage: 5Gi
