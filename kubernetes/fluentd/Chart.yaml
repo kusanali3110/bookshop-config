@@ -1,6 +1,4 @@
 apiVersion: v2
 name: fluentd
-description: Fluentd to collect logs from bookshop namespace
-type: application
 version: 0.1.0
-appVersion: 1.16.0
+description: Fluentd to forward logs to Elasticsearch
