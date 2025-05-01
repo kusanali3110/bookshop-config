@@ -24,12 +24,4 @@ spec:
               value: "HS256"
           envFrom:
             - secretRef:
-                name: jwtSecretKey
-            - secretRef:
-                name: senderEmail
-            - secretRef:
-                name: senderPassword
-            - secretRef:
-                name: smtpPort
-            - secretRef:
-                name: smtpServer
+                name: bookshop-secret-values
