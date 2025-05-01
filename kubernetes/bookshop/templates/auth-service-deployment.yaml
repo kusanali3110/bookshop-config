@@ -22,7 +22,7 @@ spec:
               value: "mongodb://mongodb:{{ .Values.mongodb.port }}/bookshop"
             - name: JWT_ALGORITHM
               value: "HS256"
-          envForm:
+          envFrom:
             - secretRef:
                 name: jwtSecretKey
             - secretRef:
