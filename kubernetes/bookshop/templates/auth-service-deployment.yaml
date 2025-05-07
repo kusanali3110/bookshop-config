@@ -22,6 +22,8 @@ spec:
               value: "mongodb://mongodb:{{ .Values.mongodb.port }}/bookshop"
             - name: JWT_ALGORITHM
               value: "HS256"
+            - name: BASE_URL
+              value: "http://2hbookshopproject.site"
           envFrom:
             - secretRef:
                 name: bookshop-secret-values
