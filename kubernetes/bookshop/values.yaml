@@ -1,11 +1,11 @@
 replicaCount: 1
 
 apiGateway:
-  image: nahidacunny/bookshop-api_gateway:v1.0.0
+  image: nahidacunny/bookshop-api_gateway:v1.0.2-08052025-13-26-49
   port: 8000
 
 authService:
-  image: nahidacunny/bookshop-auth_service:v1.0.2-08052025-12-51-10
+  image: nahidacunny/bookshop-auth_service:v1.0.3-08052025-13-02-44
   port: 8001
   jwtSecretKey: ""
   smtp:
@@ -15,11 +15,11 @@ authService:
     senderPassword: ""
 
 bookService:
-  image: nahidacunny/bookshop-book_service:v1.0.0
+  image: nahidacunny/bookshop-book_service:v1.0.2-08052025-13-26-49
   port: 8002
 
 cartService:
-  image: nahidacunny/bookshop-cart_service:v1.0.0
+  image: nahidacunny/bookshop-cart_service:v1.0.2-08052025-13-26-49
   port: 8003
 
 mongodb:
