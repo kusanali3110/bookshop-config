@@ -17,14 +17,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:latest
+        image: { .Values.frontend.image }
         ports:
-        - containerPort: 80
-        volumeMounts:
-        - name: nginx-config
-          mountPath: /etc/nginx/nginx.conf
-          subPath: nginx.conf
-      volumes:
-      - name: nginx-config
-        configMap:
-          name: nginx-config
+        - containerPort: { .Values.frontend.port }
