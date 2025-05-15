@@ -23,7 +23,7 @@ cartService:
   port: 8003
 
 frontend:
-  image: nahidacunny/bookshop-frontend:v1.0.6-15052025-18-05-14
+  image: nahidacunny/bookshop-frontend:v1.0.7-15052025-18-09-32
   port: 80
 
 mongodb:
