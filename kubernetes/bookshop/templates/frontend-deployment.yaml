@@ -27,6 +27,9 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
+        env:
+        - name: VITE_BACKEND_URL
+          value: "http://2hbookshopproject.site/api/"
         volumeMounts:
         - name: nginx-config
           mountPath: /etc/nginx/nginx.conf

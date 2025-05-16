@@ -53,6 +53,32 @@ data:
             root /usr/share/nginx/html;
             index index.html;
 
+            # Handle uploads separately
+            location /api/book/uploads/ {
+                proxy_pass http://api-gateway:8000/book/uploads/;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_cache_bypass $http_upgrade;
+                proxy_read_timeout 300;
+                proxy_connect_timeout 300;
+                proxy_send_timeout 300;
+
+                # Cache settings for images
+                expires 30d;
+                add_header Cache-Control "public, no-transform";
+                access_log off;
+                tcp_nodelay off;
+                open_file_cache max=1000 inactive=20s;
+                open_file_cache_valid 30s;
+                open_file_cache_min_uses 2;
+                open_file_cache_errors on;
+            }
+
             # Frontend static files and CORS handling
             location / {
                 try_files $uri $uri/ /index.html;
