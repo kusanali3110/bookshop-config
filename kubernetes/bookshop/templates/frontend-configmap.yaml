@@ -19,7 +19,7 @@ data:
                          '$status $body_bytes_sent "$http_referer" '
                          '"$http_user_agent" "$http_x_forwarded_for"';
         access_log  /var/log/nginx/access.log  main;
-        error_log   /var/log/nginx/error.log warn;
+        error_log   /var/log/nginx/error.log debug;
 
         # Basic settings
         sendfile        on;
@@ -54,7 +54,7 @@ data:
             index index.html;
 
             # Handle uploads separately
-            location /api/book/uploads/ {
+            location ^~ /api/book/uploads/ {
                 proxy_pass http://api-gateway:8000/book/uploads/;
                 proxy_http_version 1.1;
                 proxy_set_header Upgrade $http_upgrade;
@@ -77,28 +77,11 @@ data:
                 open_file_cache_valid 30s;
                 open_file_cache_min_uses 2;
                 open_file_cache_errors on;
-            }
 
-            # Frontend static files and CORS handling
-            location / {
-                try_files $uri $uri/ /index.html;
-
-                # CORS headers
-                add_header 'Access-Control-Allow-Origin' '*' always;
-                add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
-                add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
-                add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
-
-                # Handle OPTIONS method
-                if ($request_method = 'OPTIONS') {
-                    add_header 'Access-Control-Allow-Origin' '*';
-                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
-                    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
-                    add_header 'Access-Control-Max-Age' 1728000;
-                    add_header 'Content-Type' 'text/plain; charset=utf-8';
-                    add_header 'Content-Length' 0;
-                    return 204;
-                }
+                # Debug headers
+                add_header X-Debug-Message "Handling upload request" always;
+                add_header X-Debug-URI $request_uri always;
+                add_header X-Debug-Upstream $upstream_addr always;
             }
 
             # API Gateway proxy
@@ -123,6 +106,28 @@ data:
                 add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
 
                 # Handle OPTIONS method for API
+                if ($request_method = 'OPTIONS') {
+                    add_header 'Access-Control-Allow-Origin' '*';
+                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
+                    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+                    add_header 'Access-Control-Max-Age' 1728000;
+                    add_header 'Content-Type' 'text/plain; charset=utf-8';
+                    add_header 'Content-Length' 0;
+                    return 204;
+                }
+            }
+
+            # Frontend static files and CORS handling
+            location / {
+                try_files $uri $uri/ /index.html;
+
+                # CORS headers
+                add_header 'Access-Control-Allow-Origin' '*' always;
+                add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+                add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
+                add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
+
+                # Handle OPTIONS method
                 if ($request_method = 'OPTIONS') {
                     add_header 'Access-Control-Allow-Origin' '*';
                     add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
