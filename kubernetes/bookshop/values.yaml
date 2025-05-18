@@ -5,7 +5,7 @@ apiGateway:
   port: 8000
 
 authService:
-  image: nahidacunny/bookshop-auth_service:v1.0.5-15052025-13-35-25
+  image: nahidacunny/bookshop-auth_service:v1.0.6-18052025-04-07-13
   port: 8001
   jwtSecretKey: ""
   smtp:
