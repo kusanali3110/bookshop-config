@@ -40,6 +40,25 @@ data:
         gzip_min_length 1000;
         gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 
+        # Common proxy settings
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+        proxy_send_timeout 300;
+
+        # Common CORS headers
+        map $request_method $cors_method {
+            OPTIONS 'true';
+            default 'false';
+        }
+
         # Default security headers
         add_header X-Frame-Options "SAMEORIGIN" always;
         add_header X-XSS-Protection "1; mode=block" always;
@@ -53,51 +72,10 @@ data:
             root /usr/share/nginx/html;
             index index.html;
 
-            # Handle uploads separately
-            location ^~ /api/book/uploads/ {
-                proxy_pass http://api-gateway:8000/book/uploads/;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection 'upgrade';
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-                proxy_cache_bypass $http_upgrade;
-                proxy_read_timeout 300;
-                proxy_connect_timeout 300;
-                proxy_send_timeout 300;
-
-                # Cache settings for images
-                expires 30d;
-                add_header Cache-Control "public, no-transform";
-                access_log off;
-                tcp_nodelay off;
-                open_file_cache max=1000 inactive=20s;
-                open_file_cache_valid 30s;
-                open_file_cache_min_uses 2;
-                open_file_cache_errors on;
-
-                # Debug headers
-                add_header X-Debug-Message "Handling upload request" always;
-                add_header X-Debug-URI $request_uri always;
-                add_header X-Debug-Upstream $upstream_addr always;
-            }
-
             # API Gateway proxy
             location /api/ {
-                proxy_pass http://api-gateway:8000/;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection 'upgrade';
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-                proxy_cache_bypass $http_upgrade;
-                proxy_read_timeout 300;
-                proxy_connect_timeout 300;
-                proxy_send_timeout 300;
+                rewrite ^/api/(.*) /$1 break;
+                proxy_pass http://api-gateway:8000;
 
                 # CORS headers for API
                 add_header 'Access-Control-Allow-Origin' '*' always;
@@ -105,8 +83,8 @@ data:
                 add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
                 add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
 
-                # Handle OPTIONS method for API
-                if ($request_method = 'OPTIONS') {
+                # Handle OPTIONS method
+                if ($cors_method = 'true') {
                     add_header 'Access-Control-Allow-Origin' '*';
                     add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
                     add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
@@ -117,26 +95,9 @@ data:
                 }
             }
 
-            # Frontend static files and CORS handling
+            # Frontend static files
             location / {
                 try_files $uri $uri/ /index.html;
-
-                # CORS headers
-                add_header 'Access-Control-Allow-Origin' '*' always;
-                add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
-                add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
-                add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
-
-                # Handle OPTIONS method
-                if ($request_method = 'OPTIONS') {
-                    add_header 'Access-Control-Allow-Origin' '*';
-                    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS';
-                    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
-                    add_header 'Access-Control-Max-Age' 1728000;
-                    add_header 'Content-Type' 'text/plain; charset=utf-8';
-                    add_header 'Content-Length' 0;
-                    return 204;
-                }
             }
 
             # Cache static assets
