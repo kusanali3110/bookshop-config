@@ -23,7 +23,7 @@ spec:
             - name: JWT_ALGORITHM
               value: "HS256"
             - name: BASE_URL
-              value: "http://2hbookshopproject.site"
+              value: "https://2hbookshopproject.site"
           envFrom:
             - secretRef:
                 name: bookshop-secret-values
