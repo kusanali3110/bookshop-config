@@ -73,7 +73,7 @@ data:
             index index.html;
 
             # Static files from book-service
-            location /uploads/ {
+            location /api/book/uploads/ {
                 proxy_pass http://book-service:8002/uploads/;
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
