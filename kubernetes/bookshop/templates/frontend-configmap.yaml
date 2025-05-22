@@ -65,7 +65,7 @@ data:
         add_header X-XSS-Protection "1; mode=block" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https: http:; connect-src 'self' http://api.2hbookshopproject.site:8000 https://api.2hbookshopproject.site:8000;" always;
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://api-gateway:8000;" always;
 
         server {
             listen 80;
@@ -75,8 +75,7 @@ data:
 
             # API Gateway proxy
             location /api/ {
-                rewrite ^/api/(.*) /$1 break;
-                proxy_pass http://api-gateway:8000;
+                proxy_pass http://api-gateway:8000/;
 
                 # CORS headers for API
                 add_header 'Access-Control-Allow-Origin' '*' always;
