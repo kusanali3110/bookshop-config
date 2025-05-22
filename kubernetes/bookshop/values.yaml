@@ -19,11 +19,11 @@ bookService:
   port: 8002
 
 cartService:
-  image: nahidacunny/bookshop-cart_service:v1.0.2-08052025-13-26-49
+  image: nahidacunny/bookshop-cart_service:v1.0.3-22052025-10-32-16
   port: 8003
 
 frontend:
-  image: nahidacunny/bookshop-frontend:v1.0.13-22052025-06-32-12
+  image: nahidacunny/bookshop-frontend:v1.0.14-22052025-10-33-11
   port: 80
 
 mongodb:
