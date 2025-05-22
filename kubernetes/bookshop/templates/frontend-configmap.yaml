@@ -93,8 +93,7 @@ data:
 
             # API Gateway proxy
             location /api/ {
-                rewrite ^/api/(.*) /$1 break;
-                proxy_pass http://api-gateway:8000;
+                proxy_pass http://api-gateway:8000/;
 
                 # CORS headers for API
                 add_header 'Access-Control-Allow-Origin' '*' always;
