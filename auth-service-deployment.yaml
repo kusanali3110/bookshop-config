@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: {{ .Values.authService.image }}
+          ports:
+            - containerPort: {{ .Values.authService.port }}
+          env:
+            - name: MONGODB_URL
+              value: "mongodb://mongodb:{{ .Values.mongodb.port }}/bookshop"
+            - name: JWT_ALGORITHM
+              value: "HS256"
+            - name: BASE_URL
+              value: "https://2hbookshopproject.site"
+          envFrom:
+            - secretRef:
+                name: bookshop-secret-values

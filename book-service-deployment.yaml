@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-service
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: book-service
+  template:
+    metadata:
+      labels:
+        app: book-service
+    spec:
+      containers:
+        - name: book-service
+          image: {{ .Values.bookService.image }}
+          ports:
+            - containerPort: {{ .Values.bookService.port }}
+          env:
+            - name: PORT
+              value: "{{ .Values.bookService.port }}"
+            - name: MONGODB_URI
+              value: "mongodb://mongodb:{{ .Values.mongodb.port }}/bookshop"
+            - name: NODE_ENV
+              value: "development"
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
+      volumes:
+        - name: uploads
+          emptyDir: {}

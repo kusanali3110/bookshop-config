@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart-service
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: cart-service
+  template:
+    metadata:
+      labels:
+        app: cart-service
+    spec:
+      containers:
+        - name: cart-service
+          image: {{ .Values.cartService.image }}
+          ports:
+            - containerPort: {{ .Values.cartService.port }}
+          env:
+            - name: MONGODB_URI
+              value: "mongodb://mongodb:{{ .Values.mongodb.port }}/bookshop"
+            - name: BOOK_SERVICE_URL
+              value: "http://book-service:{{ .Values.bookService.port }}"
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:{{ .Values.authService.port }}"
