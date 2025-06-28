@@ -15,11 +15,11 @@ authService:
     senderPassword: ""
 
 bookService:
-  image: nahidacunny/bookshop-book_service:v1.0.5-18052025-13-09-53
+  image: nahidacunny/bookshop-book_service:v1.0.6-28062025-02-06-05
   port: 8002
 
 cartService:
-  image: nahidacunny/bookshop-cart_service:v1.0.3-22052025-10-32-16
+  image: nahidacunny/bookshop-cart_service:v1.0.4-28062025-01-57-40
   port: 8003
 
 frontend:
